@@ -196,6 +196,6 @@ app.delete("/api/games/:id", requireAdmin, (req, res) => {
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.static(path.join(__dirname), { extensions: ["html"] }));
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`ArcadeHub en http://localhost:${PORT}`);
 });
