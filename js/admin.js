@@ -157,8 +157,10 @@
       await loginAdmin(document.getElementById("password").value);
       showDash();
       await loadLists();
-    } catch {
+    } catch (err) {
       loginError.hidden = false;
+      loginError.textContent =
+        (err && err.message) || "No se pudo iniciar sesión. Revisa la contraseña o el servidor.";
     }
   });
 

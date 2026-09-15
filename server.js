@@ -6,12 +6,18 @@ const express = require("express");
 const session = require("express-session");
 const multer = require("multer");
 
+function cleanSecret(value) {
+  return String(value || "")
+    .trim()
+    .replace(/^["']|["']$/g, "");
+}
+
 const PORT = Number(process.env.PORT) || 3000;
 const isProd = process.env.NODE_ENV === "production";
-const ADMIN_PASSWORD = String(process.env.ADMIN_PASSWORD || "").trim();
-const SESSION_SECRET = String(
+const ADMIN_PASSWORD = cleanSecret(process.env.ADMIN_PASSWORD);
+const SESSION_SECRET = cleanSecret(
   process.env.SESSION_SECRET || (isProd ? "" : "arcadehub-dev-secret-change-me")
-).trim();
+);
 
 if (isProd && !ADMIN_PASSWORD) {
   console.error("Falta ADMIN_PASSWORD en Variables de Railway.");
@@ -138,7 +144,12 @@ function sanitizeGame(body, id) {
 }
 
 app.get("/api/health", (_req, res) => {
-  res.json({ ok: true });
+  res.json({
+    ok: true,
+    nodeEnv: process.env.NODE_ENV || null,
+    hasAdminPassword: Boolean(ADMIN_PASSWORD),
+    adminPasswordLength: ADMIN_PASSWORD.length,
+  });
 });
 
 app.get("/api/me", (req, res) => {
@@ -146,12 +157,17 @@ app.get("/api/me", (req, res) => {
 });
 
 app.post("/api/login", (req, res) => {
-  const password = String((req.body && req.body.password) || "");
+  const password = cleanSecret((req.body && req.body.password) || "");
   if (!password) {
     return res.status(400).json({ error: "Contraseña requerida" });
   }
   if (!passwordsMatch(password, EFFECTIVE_ADMIN_PASSWORD)) {
-    return res.status(401).json({ error: "Contraseña incorrecta" });
+    return res.status(401).json({
+      error: "Contraseña incorrecta",
+      hint: isProd
+        ? "Revisa ADMIN_PASSWORD en Railway y vuelve a hacer Redeploy"
+        : "En local usa la clave de tu archivo .env",
+    });
   }
   req.session.isAdmin = true;
   res.json({ ok: true });
