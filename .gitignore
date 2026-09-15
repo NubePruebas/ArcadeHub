@@ -3,3 +3,5 @@ node_modules/
 .DS_Store
 uploads/covers/*
 !uploads/covers/.gitkeep
+jar.txt
+cookies.txt
