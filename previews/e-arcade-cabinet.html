@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>E · Arcade Cabinet — ArcadeHub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Nunito:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#1a1020; --text:#fff8e7; --muted:#f5d0a9; --red:#e11d48; --yellow:#facc15; --orange:#fb923c; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: Nunito, sans-serif; color: var(--text);
+      background:
+        radial-gradient(circle at 20% 10%, rgba(250,204,21,.18), transparent 35%),
+        radial-gradient(circle at 80% 0%, rgba(225,29,72,.22), transparent 40%),
+        linear-gradient(180deg, #2a1535, #140c1c 50%, #0f0a14);
+    }
+    .pick { position: sticky; top: 0; z-index: 50; background: #120a18ee; border-bottom: 3px solid var(--yellow); padding: .7rem 1rem; display: flex; justify-content: space-between; align-items: center; }
+    .pick strong { font-family: Bungee, sans-serif; font-size: .85rem; color: var(--yellow); }
+    .pick a { color: var(--orange); font-weight: 800; text-decoration: none; }
+    .marquee {
+      background: linear-gradient(90deg, #be123c, #e11d48 20%, #facc15 50%, #e11d48 80%, #be123c);
+      border-bottom: 6px solid #111;
+      box-shadow: inset 0 -8px 0 rgba(0,0,0,.25);
+    }
+    .shell { width: min(1100px, calc(100% - 2rem)); margin: 0 auto; }
+    .hi { display: flex; align-items: center; gap: 1rem; min-height: 84px; flex-wrap: wrap; }
+    .logo { display: flex; align-items: center; gap: .6rem; text-decoration: none; color: #111; }
+    .mark { width: 2.5rem; height: 2.5rem; border-radius: 10px; background: #111; color: var(--yellow); display: grid; place-items: center; font-family: Bungee, sans-serif; font-size: .7rem; border: 3px solid #fff; }
+    .name { font-family: Bungee, sans-serif; font-size: clamp(1.1rem, 3vw, 1.7rem); text-shadow: 2px 2px 0 #fff8; letter-spacing: .02em; }
+    nav { display: flex; gap: .8rem; }
+    nav a { color: #111; text-decoration: none; font-weight: 800; background: #fff8; padding: .35rem .7rem; border-radius: 999px; border: 2px solid #111; }
+    .search { margin-left: auto; }
+    .search input { border: 3px solid #111; border-radius: 999px; padding: .55rem 1rem; font: inherit; font-weight: 700; min-width: 200px; background: #fff8e7; }
+    .intro { text-align: center; padding: 2rem 0 1rem; }
+    .coin {
+      display: inline-block; font-family: Bungee, sans-serif; font-size: .8rem; background: var(--yellow); color: #111;
+      padding: .45rem .9rem; border: 3px solid #111; box-shadow: 4px 4px 0 #111; margin-bottom: .9rem; animation: blink 1.2s steps(2) infinite;
+    }
+    @keyframes blink { 50% { opacity: .55; } }
+    h1 { margin: 0; font-family: Bungee, sans-serif; font-size: clamp(1.4rem, 4vw, 2.4rem); color: var(--yellow); text-shadow: 3px 3px 0 #111; }
+    .lede { color: var(--muted); max-width: 40ch; margin: .7rem auto 0; }
+    .stats { display: flex; justify-content: center; gap: .7rem; flex-wrap: wrap; margin-top: 1.1rem; }
+    .stats div { background: #111; border: 3px solid var(--yellow); border-radius: 14px; padding: .65rem 1rem; min-width: 90px; }
+    .stats strong { display: block; font-family: Bungee, sans-serif; color: var(--orange); }
+    .chips { display: flex; justify-content: center; flex-wrap: wrap; gap: .5rem; margin: 1.2rem 0; }
+    .chip { border: 3px solid #111; background: #3b1d4a; color: #fff; font: inherit; font-weight: 800; padding: .4rem .85rem; border-radius: 999px; box-shadow: 3px 3px 0 #111; cursor: pointer; }
+    .chip.on { background: var(--yellow); color: #111; }
+    h2 { text-align: center; font-family: Bungee, sans-serif; font-size: 1rem; color: var(--orange); text-shadow: 2px 2px 0 #111; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(160px,1fr)); gap: 1rem; padding-bottom: 2.8rem; }
+    .card { background: #2a1538; border: 4px solid #111; border-radius: 18px; overflow: hidden; box-shadow: 5px 5px 0 #111; transition: .15s; }
+    .card:hover { transform: translate(-3px,-3px) rotate(-1deg); box-shadow: 8px 8px 0 var(--yellow); }
+    .thumb { aspect-ratio: 1; display: grid; place-items: center; font-size: 2.7rem; border-bottom: 4px solid #111; }
+    .info { padding: .7rem; text-align: center; }
+    .info h3 { margin: 0; font-family: Bungee, sans-serif; font-size: .72rem; line-height: 1.35; }
+    .info p { margin: .35rem 0 0; color: var(--muted); font-size: .85rem; }
+    .btn { margin-top: .45rem; display: inline-block; background: var(--red); color: #fff; font-weight: 800; font-size: .75rem; padding: .3rem .65rem; border: 2px solid #111; border-radius: 999px; }
+    @media (max-width:800px){ nav{display:none} }
+  </style>
+</head>
+<body>
+  <div class="pick">
+    <strong>DEMO E · ARCADE CABINET</strong>
+    <div><a href="./">← Todas</a> · <a href="a-neon-cyber.html">Volver a A →</a></div>
+  </div>
+  <div class="marquee"><div class="shell hi">
+    <a class="logo" href="#"><span class="mark">AH</span><span class="name">ARCADEHUB</span></a>
+    <nav><a href="#">Juegos</a><a href="#">Cats</a><a href="#">Admin</a></nav>
+    <label class="search"><input placeholder="Buscar juego…" /></label>
+  </div></div>
+  <main class="shell">
+    <section class="intro">
+      <div class="coin">INSERT COIN</div>
+      <h1>SALA DE JUEGOS</h1>
+      <p class="lede">Elige una máquina, juega al instante. Minijuegos + tus links de Render.</p>
+      <div class="stats">
+        <div><strong>8</strong>juegos</div>
+        <div><strong>4</strong>cats</div>
+        <div><strong>GO</strong>html5</div>
+      </div>
+    </section>
+    <div class="chips">
+      <button class="chip on">Todos</button><button class="chip">Arcade</button><button class="chip">Puzzle</button><button class="chip">Acción</button>
+    </div>
+    <h2>ELIGE MÁQUINA</h2>
+    <div class="grid" id="g"></div>
+  </main>
+  <script>
+    const games=[["Snake","#16a34a","🐍","Arcade"],["3 en Raya","#2563eb","⭕","Estrategia"],["Memory","#db2777","🧠","Puzzle"],["Pong","#0d9488","🏓","Arcade"],["Breakout","#ea580c","🧱","Arcade"],["Flappy","#65a30d","🐥","Arcade"],["Whack","#b45309","🔨","Acción"],["RPS","#7c3aed","✊","Estrategia"]];
+    document.getElementById("g").innerHTML=games.map(([t,c,e,cat])=>`<article class="card"><div class="thumb" style="background:linear-gradient(160deg,${c},#111)">${e}</div><div class="info"><h3>${t}</h3><p>${cat}</p><span class="btn">JUGAR</span></div></article>`).join("");
+  </script>
+</body>
+</html>

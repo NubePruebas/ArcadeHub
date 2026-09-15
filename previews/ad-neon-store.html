@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A+D Hybrid — ArcadeHub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Noto+Sans:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a121c;
+      --panel: #101a27;
+      --card: #152233;
+      --text: #dceaf7;
+      --muted: #8397ab;
+      --cyan: #22d3ee;
+      --mag: #e879f9;
+      --steam: #66c0f4;
+      --line: rgba(34, 211, 238, 0.18);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Noto Sans", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(ellipse 55% 35% at 0% 0%, rgba(232, 121, 249, 0.14), transparent 50%),
+        radial-gradient(ellipse 45% 30% at 100% 5%, rgba(34, 211, 238, 0.12), transparent 48%),
+        linear-gradient(180deg, #0d1824 0%, #081018 45%, #070d14 100%);
+      min-height: 100vh;
+    }
+    .pick {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(8, 14, 22, 0.92);
+      border-bottom: 1px solid var(--line);
+      padding: 0.7rem 1rem;
+      display: flex; justify-content: space-between; align-items: center;
+      backdrop-filter: blur(10px);
+    }
+    .pick strong {
+      font-family: Orbitron, sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      color: var(--cyan);
+      text-shadow: 0 0 14px rgba(34, 211, 238, 0.4);
+    }
+    .pick a { color: var(--mag); font-weight: 700; text-decoration: none; }
+    .shell { width: min(1140px, calc(100% - 2rem)); margin: 0 auto; }
+
+    header.site {
+      background: rgba(12, 20, 32, 0.92);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 0 30px rgba(34, 211, 238, 0.06);
+    }
+    .hi { display: flex; align-items: center; gap: 1rem; min-height: 62px; }
+    .logo { display: flex; align-items: center; gap: 0.55rem; text-decoration: none; color: #fff; }
+    .mark {
+      width: 2rem; height: 2rem; display: grid; place-items: center;
+      border-radius: 6px;
+      background: linear-gradient(135deg, rgba(34, 211, 238, 0.25), rgba(232, 121, 249, 0.25));
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      font-family: Orbitron, sans-serif;
+      font-size: 0.65rem;
+      font-weight: 800;
+      box-shadow: 0 0 16px rgba(34, 211, 238, 0.35);
+    }
+    .name {
+      font-family: Orbitron, sans-serif;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      font-size: 1.05rem;
+      text-shadow: 0 0 18px rgba(232, 121, 249, 0.35);
+    }
+    nav { display: flex; gap: 0.95rem; }
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    nav a:hover { color: var(--cyan); text-shadow: 0 0 10px rgba(34, 211, 238, 0.5); }
+    .search { margin-left: auto; }
+    .search input {
+      background: #132335;
+      border: 1px solid var(--line);
+      color: #fff;
+      border-radius: 4px;
+      padding: 0.55rem 0.9rem;
+      min-width: 240px;
+      font: inherit;
+      outline: none;
+    }
+    .search input:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.15), 0 0 18px rgba(34, 211, 238, 0.2);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 1.15rem;
+      padding: 1.35rem 0 2.8rem;
+    }
+    .side {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0.95rem;
+      height: fit-content;
+      box-shadow: inset 0 0 24px rgba(34, 211, 238, 0.04);
+    }
+    .side h2 {
+      margin: 0 0 0.65rem;
+      font-family: Orbitron, sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      color: var(--cyan);
+    }
+    .side button {
+      display: block; width: 100%; text-align: left;
+      border: 0; background: transparent; color: var(--text);
+      padding: 0.48rem 0.55rem; font: inherit; font-weight: 600;
+      border-radius: 4px; cursor: pointer; margin-bottom: 0.2rem;
+    }
+    .side button.on,
+    .side button:hover {
+      background: linear-gradient(90deg, rgba(34, 211, 238, 0.18), rgba(232, 121, 249, 0.12));
+      color: #fff;
+      box-shadow: inset 2px 0 0 var(--cyan);
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(105deg, rgba(16, 28, 44, 0.95), rgba(18, 22, 40, 0.7)),
+        linear-gradient(90deg, #1a3348, #152033);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 1.4rem 1.5rem;
+      margin-bottom: 1.1rem;
+      box-shadow: 0 0 40px rgba(34, 211, 238, 0.08);
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -10% -40% auto;
+      width: 280px; height: 280px;
+      background: radial-gradient(circle, rgba(232, 121, 249, 0.25), transparent 65%);
+      pointer-events: none;
+    }
+    .eyebrow {
+      margin: 0;
+      color: var(--mag);
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 0.35rem 0 0.4rem;
+      font-family: Orbitron, sans-serif;
+      font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+      letter-spacing: 0.04em;
+      color: #fff;
+      text-shadow: 0 0 22px rgba(34, 211, 238, 0.3);
+    }
+    .lede { margin: 0; color: var(--muted); max-width: 48ch; line-height: 1.45; }
+    .meta {
+      margin-top: 0.95rem;
+      display: flex; gap: 0.7rem; flex-wrap: wrap;
+    }
+    .meta span {
+      background: rgba(10, 18, 28, 0.7);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 0.4rem 0.7rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .meta b { color: var(--cyan); font-family: Orbitron, sans-serif; font-size: 0.85rem; }
+
+    .section-title {
+      margin: 0 0 0.75rem;
+      font-family: Orbitron, sans-serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .section-title::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--line), transparent);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 0.85rem;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(102, 192, 244, 0.12);
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+    .card:hover {
+      transform: translateY(-3px) scale(1.02);
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.25), 0 12px 28px rgba(0, 0, 0, 0.35), 0 0 24px rgba(232, 121, 249, 0.15);
+    }
+    .thumb {
+      aspect-ratio: 16 / 9;
+      display: grid;
+      place-items: center;
+      font-size: 2.1rem;
+      position: relative;
+    }
+    .badge {
+      position: absolute;
+      right: 0.5rem;
+      bottom: 0.5rem;
+      font-family: Orbitron, sans-serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.08em;
+      padding: 0.28rem 0.45rem;
+      background: rgba(0, 0, 0, 0.75);
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      box-shadow: 0 0 12px rgba(34, 211, 238, 0.35);
+      opacity: 0;
+      transition: 0.15s;
+    }
+    .card:hover .badge { opacity: 1; }
+    .info {
+      padding: 0.65rem 0.75rem 0.8rem;
+      background: linear-gradient(180deg, #121e2d, #0e1724);
+      border-top: 1px solid rgba(34, 211, 238, 0.1);
+    }
+    .info h3 {
+      margin: 0;
+      font-size: 0.95rem;
+      color: #fff;
+      font-weight: 700;
+    }
+    .info p {
+      margin: 0.25rem 0 0;
+      color: var(--muted);
+      font-size: 0.76rem;
+    }
+    .tag {
+      display: inline-block;
+      margin-top: 0.4rem;
+      color: var(--mag);
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 860px) {
+      .layout { grid-template-columns: 1fr; }
+      nav { display: none; }
+      .search { width: 100%; margin: 0; }
+      .hi { flex-wrap: wrap; }
+      .search input { width: 100%; min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="pick">
+    <strong>DEMO A+D · NEON STORE</strong>
+    <div>
+      <a href="./">← Todas</a> ·
+      <a href="a-neon-cyber.html">A</a> ·
+      <a href="d-steam-dark.html">D</a>
+    </div>
+  </div>
+
+  <header class="site">
+    <div class="shell hi">
+      <a class="logo" href="#">
+        <span class="mark">AH</span>
+        <span class="name">ARCADEHUB</span>
+      </a>
+      <nav>
+        <a href="#">Tienda</a>
+        <a href="#">Biblioteca</a>
+        <a href="#">Admin</a>
+      </nav>
+      <label class="search"><input placeholder="Buscar en el catálogo…" /></label>
+    </div>
+  </header>
+
+  <div class="shell layout">
+    <aside class="side">
+      <h2>FILTROS</h2>
+      <button class="on">Todos</button>
+      <button>Arcade</button>
+      <button>Puzzle</button>
+      <button>Acción</button>
+      <button>Estrategia</button>
+      <button>Externos</button>
+    </aside>
+
+    <section>
+      <div class="hero">
+        <p class="eyebrow">Featured · Neon Store</p>
+        <h1>TU BIBLIOTECA, MODO CYBER.</h1>
+        <p class="lede">
+          Layout de tienda (Steam) + energía neon (Cyber): sidebar, covers 16:9 y glow cyan/magenta.
+        </p>
+        <div class="meta">
+          <span><b>8</b> juegos</span>
+          <span><b>4</b> categorías</span>
+          <span><b>HTML5</b> live</span>
+        </div>
+      </div>
+
+      <h2 class="section-title">CATÁLOGO</h2>
+      <div class="grid" id="g"></div>
+    </section>
+  </div>
+
+  <script>
+    const games = [
+      ["Snake", "#0e7490", "🐍", "Arcade"],
+      ["Tres en Raya", "#6d28d9", "⭕", "Estrategia"],
+      ["Memory", "#be185d", "🧠", "Puzzle"],
+      ["Pong", "#0f766e", "🏓", "Arcade"],
+      ["Breakout", "#c2410c", "🧱", "Arcade"],
+      ["Flappy", "#4d7c0f", "🐥", "Arcade"],
+      ["Whack", "#92400e", "🔨", "Acción"],
+      ["RPS", "#5b21b6", "✊", "Estrategia"],
+    ];
+    document.getElementById("g").innerHTML = games
+      .map(
+        ([t, c, e, cat]) => `
+      <article class="card">
+        <div class="thumb" style="background:linear-gradient(145deg,${c},${c}88 55%,#0a121c)">
+          <span>${e}</span>
+          <span class="badge">PLAY</span>
+        </div>
+        <div class="info">
+          <h3>${t}</h3>
+          <p>Minijuego listo · HTML5</p>
+          <span class="tag">${cat}</span>
+        </div>
+      </article>`
+      )
+      .join("");
+  </script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ArcadeHub — Juegos online</title>
+  <meta name="description" content="Catálogo de minijuegos y títulos indie. Juega al instante en el navegador." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Noto+Sans:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="shell header-inner">
+      <a class="logo" href="./">
+        <span class="logo-mark">AH</span>
+        <span class="logo-name">ARCADEHUB</span>
+      </a>
+      <nav class="nav" aria-label="Principal">
+        <a href="#juegos">Tienda</a>
+        <a href="#filtros">Biblioteca</a>
+        <a href="admin.html" class="nav-admin">Admin</a>
+      </nav>
+      <label class="search">
+        <span class="sr-only">Buscar</span>
+        <input id="search" type="search" placeholder="Buscar en el catálogo…" autocomplete="off" />
+      </label>
+    </div>
+  </header>
+
+  <div class="shell layout">
+    <aside class="sidebar" id="filtros">
+      <h2>Filtros</h2>
+      <div class="side-cats" id="categories" role="tablist" aria-label="Filtrar por categoría"></div>
+    </aside>
+
+    <main>
+      <section class="hero">
+        <p class="eyebrow">Featured · Neon Store</p>
+        <h1>Tu biblioteca, modo cyber.</h1>
+        <p class="lede">Minijuegos incluidos y tus títulos en la nube. Un clic y estás dentro.</p>
+        <div class="hero-meta" aria-label="Resumen">
+          <span><b id="stat-total">0</b> juegos</span>
+          <span><b id="stat-cats">0</b> categorías</span>
+          <span><b>Gratis</b> · sin descargas</span>
+        </div>
+      </section>
+
+      <section id="juegos">
+        <div class="catalog-block" id="block-custom">
+          <div class="section-head">
+            <h2 id="section-title-custom">Juegos</h2>
+            <p class="section-meta" id="count-custom"></p>
+          </div>
+          <div class="game-grid" id="grid-custom"></div>
+        </div>
+
+        <div class="catalog-block" id="block-builtin">
+          <div class="section-head">
+            <h2 id="section-title">Minijuegos</h2>
+            <p class="section-meta" id="count-builtin"></p>
+          </div>
+          <div class="game-grid" id="grid-builtin"></div>
+        </div>
+
+        <p class="empty" id="empty" hidden>No hay resultados. Prueba otra búsqueda o categoría.</p>
+        <p class="section-meta" id="result-count" hidden></p>
+      </section>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="shell footer-inner">
+      <div>
+        <strong>ArcadeHub</strong>
+        <p>Portal personal de juegos para la comunidad.</p>
+      </div>
+      <a href="admin.html">Gestionar catálogo</a>
+    </div>
+  </footer>
+
+  <div class="player" id="player" hidden>
+    <div class="player-backdrop" data-close></div>
+    <div class="player-panel" role="dialog" aria-modal="true" aria-labelledby="player-title">
+      <header class="player-bar">
+        <div>
+          <h2 id="player-title"></h2>
+          <p id="player-meta"></p>
+        </div>
+        <div class="player-actions">
+          <a id="player-external" href="#" target="_blank" rel="noopener noreferrer">Pestaña nueva</a>
+          <button type="button" class="btn-icon" data-close aria-label="Cerrar">✕</button>
+        </div>
+      </header>
+      <iframe id="player-frame" title="Juego" allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/catalog.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

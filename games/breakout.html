@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Breakout</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #0b1220; color: #e2e8f0; font-family: system-ui, sans-serif; }
+    canvas { background: #111827; border: 2px solid #334155; border-radius: 12px; max-width: 100%; }
+    .hud { text-align: center; margin-bottom: 0.5rem; font-weight: 700; }
+    button { display: block; margin: 0.7rem auto 0; border: 0; background: #ea580c; color: #fff; font-weight: 700; padding: 0.55rem 1rem; border-radius: 8px; cursor: pointer; }
+    p { text-align: center; opacity: 0.7; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <div>
+    <div class="hud">Puntos: <b id="score">0</b> · <span id="msg">Mueve la pala</span></div>
+    <canvas id="c" width="480" height="320"></canvas>
+    <button id="restart">Reiniciar</button>
+    <p>Ratón / dedo para mover</p>
+  </div>
+  <script>
+    const canvas = document.getElementById("c");
+    const ctx = canvas.getContext("2d");
+    const cols = 8, rows = 5, bw = 52, bh = 16, gap = 6;
+    let paddle, ball, bricks, score, running;
+
+    function reset() {
+      score = 0; running = true;
+      document.getElementById("score").textContent = "0";
+      document.getElementById("msg").textContent = "Mueve la pala";
+      paddle = { x: 200, y: 295, w: 80, h: 10 };
+      ball = { x: 240, y: 250, vx: 2.8, vy: -2.8, r: 6 };
+      bricks = [];
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          bricks.push({
+            x: 20 + c * (bw + gap),
+            y: 30 + r * (bh + gap),
+            alive: true,
+            color: ["#fb923c", "#f97316", "#ea580c", "#c2410c", "#9a3412"][r],
+          });
+        }
+      }
+    }
+
+    canvas.addEventListener("mousemove", (e) => {
+      const rect = canvas.getBoundingClientRect();
+      paddle.x = ((e.clientX - rect.left) / rect.width) * canvas.width - paddle.w / 2;
+    });
+    canvas.addEventListener("touchmove", (e) => {
+      e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      paddle.x = ((e.touches[0].clientX - rect.left) / rect.width) * canvas.width - paddle.w / 2;
+    }, { passive: false });
+
+    function loop() {
+      if (running) {
+        paddle.x = Math.max(0, Math.min(canvas.width - paddle.w, paddle.x));
+        ball.x += ball.vx; ball.y += ball.vy;
+        if (ball.x < ball.r || ball.x > canvas.width - ball.r) ball.vx *= -1;
+        if (ball.y < ball.r) ball.vy *= -1;
+        if (ball.y > paddle.y && ball.y < paddle.y + paddle.h && ball.x > paddle.x && ball.x < paddle.x + paddle.w) {
+          ball.vy = -Math.abs(ball.vy);
+          ball.vx += (ball.x - (paddle.x + paddle.w / 2)) * 0.08;
+        }
+        bricks.forEach((b) => {
+          if (!b.alive) return;
+          if (ball.x > b.x && ball.x < b.x + bw && ball.y > b.y && ball.y < b.y + bh) {
+            b.alive = false; ball.vy *= -1; score += 10;
+            document.getElementById("score").textContent = score;
+          }
+        });
+        if (ball.y > canvas.height) {
+          running = false;
+          document.getElementById("msg").textContent = "Game Over";
+        }
+        if (bricks.every((b) => !b.alive)) {
+          running = false;
+          document.getElementById("msg").textContent = "¡Ganaste!";
+        }
+      }
+
+      ctx.fillStyle = "#111827";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      bricks.forEach((b) => {
+        if (!b.alive) return;
+        ctx.fillStyle = b.color;
+        ctx.fillRect(b.x, b.y, bw, bh);
+      });
+      ctx.fillStyle = "#fdba74";
+      ctx.fillRect(paddle.x, paddle.y, paddle.w, paddle.h);
+      ctx.beginPath();
+      ctx.fillStyle = "#fff";
+      ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
+      ctx.fill();
+      requestAnimationFrame(loop);
+    }
+
+    document.getElementById("restart").onclick = reset;
+    reset();
+    loop();
+  </script>
+</body>
+</html>

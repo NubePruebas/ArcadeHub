@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elige estilo — ArcadeHub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;800&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#0b0f14; --card:#151b24; --text:#eef2f7; --muted:#9aa6b5; --line:#243041; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Outfit, sans-serif; background: var(--bg); color: var(--text); }
+    .wrap { width: min(1000px, calc(100% - 2rem)); margin: 0 auto; padding: 2.5rem 0 3rem; }
+    h1 { margin: 0; font-size: clamp(1.8rem, 4vw, 2.6rem); letter-spacing: -0.03em; }
+    p { color: var(--muted); line-height: 1.5; max-width: 48ch; }
+    .grid { display: grid; gap: 1rem; margin-top: 1.75rem; }
+    a.card {
+      display: grid; grid-template-columns: 120px 1fr auto; gap: 1rem; align-items: center;
+      text-decoration: none; color: inherit; background: var(--card); border: 1px solid var(--line);
+      border-radius: 16px; padding: 1rem 1.1rem; transition: .15s ease;
+    }
+    a.card:hover { transform: translateY(-2px); border-color: #3b82f6; }
+    .swatch { height: 72px; border-radius: 12px; }
+    .a { background: linear-gradient(135deg,#061018,#0ff 40%,#f0f,#061018); }
+    .b { background: linear-gradient(135deg,#031a0a,#22c55e 35%,#fbbf24,#031a0a); image-rendering: pixelated; }
+    .c { background: linear-gradient(135deg,#0a0a0a,#ef4444 45%,#fff,#0a0a0a); }
+    .d { background: linear-gradient(135deg,#1b2838,#2a475e,#66c0f4); }
+    .e { background: linear-gradient(90deg,#dc2626,#f59e0b,#fde047); }
+    strong { display: block; font-size: 1.15rem; }
+    small { color: var(--muted); }
+    .go { font-weight: 800; color: #60a5fa; }
+    .note { margin-top: 1.5rem; font-size: .9rem; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>ArcadeHub — elige un estilo</h1>
+    <p>Abre cada demo. Son páginas reales del portal (mismo layout, distinta piel). Cuando elijas, dime la letra y lo aplico al sitio.</p>
+    <div class="grid">
+      <a class="card" href="a-neon-cyber.html" target="_blank">
+        <div class="swatch a"></div>
+        <div><strong>A · Neon Cyber</strong><small>Negro, cyan/magenta, glow</small></div>
+        <span class="go">Ver demo →</span>
+      </a>
+      <a class="card" href="b-retro-pixel.html" target="_blank">
+        <div class="swatch b"></div>
+        <div><strong>B · Retro Pixel</strong><small>CRT, pixel, verde/ámbar</small></div>
+        <span class="go">Ver demo →</span>
+      </a>
+      <a class="card" href="c-esports-hud.html" target="_blank">
+        <div class="swatch c"></div>
+        <div><strong>C · Esports HUD</strong><small>Negro/rojo, scoreboard</small></div>
+        <span class="go">Ver demo →</span>
+      </a>
+      <a class="card" href="d-steam-dark.html" target="_blank">
+        <div class="swatch d"></div>
+        <div><strong>D · Steam Dark</strong><small>Catálogo tienda oscura</small></div>
+        <span class="go">Ver demo →</span>
+      </a>
+      <a class="card" href="e-arcade-cabinet.html" target="_blank">
+        <div class="swatch e"></div>
+        <div><strong>E · Arcade Cabinet</strong><small>Marquee, INSERT COIN</small></div>
+        <span class="go">Ver demo →</span>
+      </a>
+      <a class="card" href="ad-neon-store.html" target="_blank">
+        <div class="swatch" style="background:linear-gradient(135deg,#0a121c,#22d3ee 35%,#66c0f4 55%,#e879f9,#0a121c)"></div>
+        <div><strong>A+D · Neon Store</strong><small>Steam dark + neon cyber (híbrido)</small></div>
+        <span class="go">Ver demo →</span>
+      </a>
+    </div>
+    <p class="note">También: <code>http://localhost:3456/previews/</code> si el servidor sigue activo.</p>
+  </div>
+</body>
+</html>

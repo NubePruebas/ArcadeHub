@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Memory</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #0b1220; color: #e2e8f0; font-family: system-ui, sans-serif; }
+    .hud { display: flex; gap: 1rem; justify-content: center; margin-bottom: 0.8rem; font-weight: 700; }
+    .grid { display: grid; grid-template-columns: repeat(4, 72px); gap: 8px; }
+    .card { width: 72px; height: 72px; border: 0; border-radius: 12px; background: #9d174d; color: transparent; font-size: 1.7rem; cursor: pointer; transition: 0.15s; }
+    .card.open, .card.matched { background: #1e293b; color: #fff; }
+    .card.matched { opacity: 0.55; cursor: default; }
+    button.restart { margin-top: 1rem; border: 0; background: #db2777; color: #fff; font-weight: 700; padding: 0.55rem 1rem; border-radius: 8px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div style="text-align:center">
+    <div class="hud"><span>Movimientos: <b id="moves">0</b></span><span id="msg">Encuentra parejas</span></div>
+    <div class="grid" id="grid"></div>
+    <button class="restart" id="restart">Reiniciar</button>
+  </div>
+  <script>
+    const icons = ["🍎","🍋","🍇","🍒","🥝","🍑","🍌","🍉"];
+    let first, lock, moves, matched;
+    const grid = document.getElementById("grid");
+
+    function reset() {
+      first = null; lock = false; moves = 0; matched = 0;
+      document.getElementById("moves").textContent = "0";
+      document.getElementById("msg").textContent = "Encuentra parejas";
+      const deck = [...icons, ...icons].sort(() => Math.random() - 0.5);
+      grid.innerHTML = "";
+      deck.forEach((icon) => {
+        const btn = document.createElement("button");
+        btn.className = "card";
+        btn.dataset.icon = icon;
+        btn.addEventListener("click", () => flip(btn));
+        grid.appendChild(btn);
+      });
+    }
+
+    function flip(btn) {
+      if (lock || btn.classList.contains("open") || btn.classList.contains("matched")) return;
+      btn.classList.add("open");
+      btn.textContent = btn.dataset.icon;
+      if (!first) { first = btn; return; }
+      moves++;
+      document.getElementById("moves").textContent = moves;
+      if (first.dataset.icon === btn.dataset.icon) {
+        first.classList.add("matched");
+        btn.classList.add("matched");
+        first = null;
+        matched += 2;
+        if (matched === 16) document.getElementById("msg").textContent = "¡Completado!";
+      } else {
+        lock = true;
+        const a = first, b = btn;
+        setTimeout(() => {
+          a.classList.remove("open"); a.textContent = "";
+          b.classList.remove("open"); b.textContent = "";
+          first = null; lock = false;
+        }, 550);
+      }
+    }
+
+    document.getElementById("restart").onclick = reset;
+    reset();
+  </script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pong</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #0b1220; color: #e2e8f0; font-family: system-ui, sans-serif; }
+    canvas { background: #020617; border: 2px solid #334155; border-radius: 12px; max-width: 100%; }
+    .hud { text-align: center; margin-bottom: 0.5rem; font-weight: 700; }
+    p { text-align: center; opacity: 0.7; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <div>
+    <div class="hud"><span id="score">Tú 0 — 0 CPU</span></div>
+    <canvas id="c" width="480" height="300"></canvas>
+    <p>Mueve con el ratón / dedo. Primer a 5 gana.</p>
+  </div>
+  <script>
+    const canvas = document.getElementById("c");
+    const ctx = canvas.getContext("2d");
+    const paddleH = 60, paddleW = 10;
+    let playerY = 120, cpuY = 120, ball, pScore = 0, cScore = 0, over = false;
+
+    function serve() {
+      const dir = Math.random() > 0.5 ? 1 : -1;
+      ball = { x: 240, y: 150, vx: 3.2 * dir, vy: (Math.random() * 2 + 1) * (Math.random() > 0.5 ? 1 : -1) };
+    }
+
+    function resetMatch() {
+      pScore = 0; cScore = 0; over = false; serve();
+      document.getElementById("score").textContent = "Tú 0 — 0 CPU";
+    }
+
+    canvas.addEventListener("mousemove", (e) => {
+      const r = canvas.getBoundingClientRect();
+      playerY = ((e.clientY - r.top) / r.height) * canvas.height - paddleH / 2;
+    });
+    canvas.addEventListener("touchmove", (e) => {
+      e.preventDefault();
+      const r = canvas.getBoundingClientRect();
+      playerY = ((e.touches[0].clientY - r.top) / r.height) * canvas.height - paddleH / 2;
+    }, { passive: false });
+
+    function loop() {
+      if (!over) {
+        ball.x += ball.vx; ball.y += ball.vy;
+        if (ball.y < 6 || ball.y > canvas.height - 6) ball.vy *= -1;
+        const hitPlayer = ball.x < 22 && ball.y > playerY && ball.y < playerY + paddleH;
+        const hitCpu = ball.x > canvas.width - 22 && ball.y > cpuY && ball.y < cpuY + paddleH;
+        if (hitPlayer || hitCpu) {
+          ball.vx *= -1.05;
+          ball.x = hitPlayer ? 22 : canvas.width - 22;
+        }
+        const target = ball.y - paddleH / 2;
+        cpuY += Math.max(-3.1, Math.min(3.1, target - cpuY));
+        cpuY = Math.max(0, Math.min(canvas.height - paddleH, cpuY));
+        playerY = Math.max(0, Math.min(canvas.height - paddleH, playerY));
+
+        if (ball.x < 0) { cScore++; afterPoint(); }
+        if (ball.x > canvas.width) { pScore++; afterPoint(); }
+      }
+
+      ctx.fillStyle = "#020617";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#334155";
+      for (let y = 0; y < canvas.height; y += 18) ctx.fillRect(canvas.width / 2 - 1, y, 2, 10);
+      ctx.fillStyle = "#99f6e4";
+      ctx.fillRect(8, playerY, paddleW, paddleH);
+      ctx.fillRect(canvas.width - 18, cpuY, paddleW, paddleH);
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, 6, 0, Math.PI * 2);
+      ctx.fill();
+      requestAnimationFrame(loop);
+    }
+
+    function afterPoint() {
+      document.getElementById("score").textContent = `Tú ${pScore} — ${cScore} CPU`;
+      if (pScore >= 5 || cScore >= 5) {
+        over = true;
+        document.getElementById("score").textContent += pScore >= 5 ? " · ¡Ganaste!" : " · Pierdes";
+        setTimeout(resetMatch, 1600);
+      } else serve();
+    }
+
+    serve();
+    loop();
+  </script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — ArcadeHub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Noto+Sans:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="admin-body">
+  <header class="site-header">
+    <div class="shell header-inner">
+      <a class="logo" href="./">
+        <span class="logo-mark">AH</span>
+        <span class="logo-name">ARCADEHUB</span>
+      </a>
+      <a class="back-link" href="./">← Volver al portal</a>
+    </div>
+  </header>
+
+  <main class="shell admin-main">
+    <section class="admin-card" id="login-view">
+      <h1>Acceso administrador</h1>
+      <p class="lede">Zona restringida. Solo el administrador puede entrar para gestionar la página y el catálogo de juegos. El público no tiene acceso aquí.</p>
+      <form id="login-form" class="stack-form">
+        <label>
+          Contraseña
+          <input id="password" type="password" required autocomplete="current-password" />
+        </label>
+        <p class="form-error" id="login-error" hidden>Contraseña incorrecta.</p>
+        <button type="submit" class="btn-primary">Entrar</button>
+      </form>
+    </section>
+
+    <section class="admin-dashboard" id="dash-view" hidden>
+      <div class="admin-head">
+        <div>
+          <h1>Panel de juegos</h1>
+          <p class="lede">Añade links de Render u otros hosts. Los minijuegos internos no se borran desde aquí.</p>
+        </div>
+        <button type="button" class="btn-ghost" id="logout-btn">Cerrar sesión</button>
+      </div>
+
+      <div class="admin-grid">
+        <form id="game-form" class="admin-card stack-form">
+          <h2 id="form-title">Añadir juego</h2>
+          <input type="hidden" id="edit-id" value="" />
+          <label>
+            Título
+            <input id="title" type="text" required maxlength="60" placeholder="Nombre del juego" />
+          </label>
+          <label>
+            URL (Render u otro)
+            <input id="url" type="url" required placeholder="https://tu-juego.onrender.com" />
+          </label>
+          <label>
+            Categoría
+            <select id="category">
+              <option>Arcade</option>
+              <option>Puzzle</option>
+              <option>Acción</option>
+              <option>Estrategia</option>
+              <option>Carreras</option>
+              <option>Aventura</option>
+              <option>Multijugador</option>
+            </select>
+          </label>
+          <label>
+            Descripción corta
+            <input id="description" type="text" maxlength="120" placeholder="Una línea sobre el juego" />
+          </label>
+          <label>
+            Portada del juego
+            <input id="cover-file" type="file" accept="image/png,image/jpeg,image/webp,image/gif" />
+          </label>
+          <label>
+            O URL de portada
+            <input id="cover-url" type="url" placeholder="https://…/portada.jpg" />
+          </label>
+          <div class="cover-preview-wrap">
+            <img id="cover-preview" class="cover-preview" alt="Vista previa de portada" hidden />
+            <input type="hidden" id="cover" value="" />
+          </div>
+          <div class="row-2">
+            <label>
+              Color de fondo
+              <input id="color" type="color" value="#22d3ee" />
+            </label>
+            <label>
+              Emoji (si no hay portada)
+              <input id="emoji" type="text" maxlength="4" value="🎮" />
+            </label>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-primary" id="submit-btn">Guardar juego</button>
+            <button type="button" class="btn-ghost" id="cancel-edit" hidden>Cancelar</button>
+          </div>
+        </form>
+
+        <div class="admin-card">
+          <h2>Tus juegos externos</h2>
+          <ul class="admin-list" id="custom-list"></ul>
+          <p class="empty-inline" id="custom-empty">Aún no has añadido juegos externos.</p>
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <h2>Minijuegos incluidos</h2>
+        <p class="lede">Estos 8 juegos van con el sitio y siempre están disponibles.</p>
+        <ul class="admin-list builtin" id="builtin-list"></ul>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/catalog.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

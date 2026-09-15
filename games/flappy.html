@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flappy Jump</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #0b1220; color: #e2e8f0; font-family: system-ui, sans-serif; }
+    canvas { background: linear-gradient(#38bdf8, #bae6fd 70%, #4d7c0f 70%, #365314); border: 2px solid #334155; border-radius: 12px; max-width: 100%; }
+    .hud { text-align: center; margin-bottom: 0.5rem; font-weight: 700; }
+    p { text-align: center; opacity: 0.75; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <div>
+    <div class="hud">Puntos: <b id="score">0</b> · <span id="msg">Clic / espacio para saltar</span></div>
+    <canvas id="c" width="360" height="480"></canvas>
+    <p>Evita los tubos verdes</p>
+  </div>
+  <script>
+    const canvas = document.getElementById("c");
+    const ctx = canvas.getContext("2d");
+    let bird, pipes, score, alive, started;
+
+    function reset() {
+      bird = { x: 70, y: 200, vy: 0, r: 12 };
+      pipes = [];
+      score = 0; alive = true; started = false;
+      document.getElementById("score").textContent = "0";
+      document.getElementById("msg").textContent = "Clic / espacio para saltar";
+      spawn();
+    }
+
+    function spawn() {
+      const gap = 120;
+      const top = 60 + Math.random() * 180;
+      pipes.push({ x: canvas.width, top, gap, passed: false });
+    }
+
+    function flap() {
+      if (!alive) { reset(); return; }
+      started = true;
+      bird.vy = -5.8;
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "Space") { e.preventDefault(); flap(); }
+    });
+    canvas.addEventListener("pointerdown", flap);
+
+    function loop() {
+      if (started && alive) {
+        bird.vy += 0.28;
+        bird.y += bird.vy;
+        pipes.forEach((p) => p.x -= 2.2);
+        if (pipes.length && pipes[pipes.length - 1].x < 180) spawn();
+        pipes = pipes.filter((p) => p.x > -50);
+        pipes.forEach((p) => {
+          const hitX = bird.x + bird.r > p.x && bird.x - bird.r < p.x + 46;
+          const hitY = bird.y - bird.r < p.top || bird.y + bird.r > p.top + p.gap;
+          if (hitX && hitY) alive = false;
+          if (!p.passed && p.x + 46 < bird.x) {
+            p.passed = true; score++;
+            document.getElementById("score").textContent = score;
+          }
+        });
+        if (bird.y > canvas.height - 30 || bird.y < 0) alive = false;
+        if (!alive) document.getElementById("msg").textContent = "Game Over · clic para reiniciar";
+      }
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const grd = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      grd.addColorStop(0, "#38bdf8");
+      grd.addColorStop(0.7, "#bae6fd");
+      grd.addColorStop(0.7, "#4d7c0f");
+      grd.addColorStop(1, "#365314");
+      ctx.fillStyle = grd;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      pipes.forEach((p) => {
+        ctx.fillStyle = "#15803d";
+        ctx.fillRect(p.x, 0, 46, p.top);
+        ctx.fillRect(p.x, p.top + p.gap, 46, canvas.height);
+      });
+
+      ctx.fillStyle = "#eab308";
+      ctx.beginPath();
+      ctx.arc(bird.x, bird.y, bird.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#111";
+      ctx.beginPath();
+      ctx.arc(bird.x + 4, bird.y - 3, 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      requestAnimationFrame(loop);
+    }
+
+    reset();
+    loop();
+  </script>
+</body>
+</html>

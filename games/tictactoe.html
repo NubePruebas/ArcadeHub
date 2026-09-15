@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tres en Raya</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #0b1220; color: #e2e8f0; font-family: system-ui, sans-serif; }
+    h1 { margin: 0 0 0.4rem; font-size: 1.3rem; }
+    #status { margin-bottom: 0.8rem; font-weight: 700; color: #93c5fd; }
+    .board { display: grid; grid-template-columns: repeat(3, 90px); gap: 8px; }
+    .cell { width: 90px; height: 90px; border: 0; border-radius: 12px; background: #1e293b; color: #fff; font-size: 2.2rem; font-weight: 800; cursor: pointer; }
+    .cell:hover:not(:disabled) { background: #334155; }
+    .cell:disabled { cursor: default; }
+    button.restart { margin-top: 1rem; border: 0; background: #2563eb; color: #fff; font-weight: 700; padding: 0.55rem 1rem; border-radius: 8px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div style="text-align:center">
+    <h1>Tres en Raya</h1>
+    <div id="status">Turno: X</div>
+    <div class="board" id="board"></div>
+    <button class="restart" id="restart">Reiniciar</button>
+  </div>
+  <script>
+    const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+    let board, turn, over;
+    const status = document.getElementById("status");
+    const el = document.getElementById("board");
+
+    function reset() {
+      board = Array(9).fill("");
+      turn = "X";
+      over = false;
+      status.textContent = "Turno: X";
+      el.innerHTML = "";
+      board.forEach((_, i) => {
+        const b = document.createElement("button");
+        b.className = "cell";
+        b.addEventListener("click", () => play(i, b));
+        el.appendChild(b);
+      });
+    }
+
+    function play(i, btn) {
+      if (over || board[i]) return;
+      board[i] = turn;
+      btn.textContent = turn;
+      btn.disabled = true;
+      if (wins.some((w) => w.every((j) => board[j] === turn))) {
+        status.textContent = "Gana " + turn;
+        over = true;
+        return;
+      }
+      if (board.every(Boolean)) {
+        status.textContent = "Empate";
+        over = true;
+        return;
+      }
+      turn = turn === "X" ? "O" : "X";
+      status.textContent = "Turno: " + turn;
+    }
+
+    document.getElementById("restart").onclick = reset;
+    reset();
+  </script>
+</body>
+</html>
