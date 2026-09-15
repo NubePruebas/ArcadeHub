@@ -7,8 +7,24 @@ const session = require("express-session");
 const multer = require("multer");
 
 const PORT = Number(process.env.PORT) || 3000;
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "arcadehub2026";
-const SESSION_SECRET = process.env.SESSION_SECRET || "arcadehub-dev-secret-change-me";
+const isProd = process.env.NODE_ENV === "production";
+const ADMIN_PASSWORD = String(process.env.ADMIN_PASSWORD || "").trim();
+const SESSION_SECRET = String(
+  process.env.SESSION_SECRET || (isProd ? "" : "arcadehub-dev-secret-change-me")
+).trim();
+
+if (isProd && !ADMIN_PASSWORD) {
+  console.error("Falta ADMIN_PASSWORD en Variables de Railway.");
+  process.exit(1);
+}
+
+if (isProd && !SESSION_SECRET) {
+  console.error("Falta SESSION_SECRET en Variables de Railway.");
+  process.exit(1);
+}
+
+// Solo en local, si no hay .env, usa clave de desarrollo
+const EFFECTIVE_ADMIN_PASSWORD = ADMIN_PASSWORD || "arcadehub2026";
 const GAMES_FILE = path.join(__dirname, "data", "games.json");
 const UPLOADS_DIR = path.join(__dirname, "uploads", "covers");
 
@@ -134,7 +150,7 @@ app.post("/api/login", (req, res) => {
   if (!password) {
     return res.status(400).json({ error: "Contraseña requerida" });
   }
-  if (!passwordsMatch(password, ADMIN_PASSWORD)) {
+  if (!passwordsMatch(password, EFFECTIVE_ADMIN_PASSWORD)) {
     return res.status(401).json({ error: "Contraseña incorrecta" });
   }
   req.session.isAdmin = true;
@@ -197,5 +213,8 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.static(path.join(__dirname), { extensions: ["html"] }));
 
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`ArcadeHub en http://localhost:${PORT}`);
+  console.log(`ArcadeHub en puerto ${PORT}`);
+  console.log(
+    `ADMIN_PASSWORD desde variables: ${ADMIN_PASSWORD ? "sí" : "no (usando default local)"}`
+  );
 });
