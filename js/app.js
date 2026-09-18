@@ -11,10 +11,12 @@
   const sectionTitle = document.getElementById("section-title");
   const sectionTitleCustom = document.getElementById("section-title-custom");
   const player = document.getElementById("player");
+  const playerPanel = player.querySelector(".player-panel");
   const playerTitle = document.getElementById("player-title");
   const playerMeta = document.getElementById("player-meta");
   const playerFrame = document.getElementById("player-frame");
   const playerExternal = document.getElementById("player-external");
+  const playerFullscreen = document.getElementById("player-fullscreen");
 
   let activeCategory = "Todos";
   let query = "";
@@ -124,16 +126,41 @@
   }
 
   function closePlayer() {
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {});
+    }
     player.hidden = true;
+    playerPanel.classList.remove("is-fullscreen");
     playerFrame.src = "";
     document.body.style.overflow = "";
   }
+
+  async function toggleFullscreen() {
+    try {
+      if (!document.fullscreenElement) {
+        await playerPanel.requestFullscreen();
+        playerPanel.classList.add("is-fullscreen");
+      } else {
+        await document.exitFullscreen();
+        playerPanel.classList.remove("is-fullscreen");
+      }
+    } catch {
+      /* algunos navegadores bloquean fullscreen en iframe cruzado */
+    }
+  }
+
+  playerFullscreen.addEventListener("click", toggleFullscreen);
+  document.addEventListener("fullscreenchange", () => {
+    if (!document.fullscreenElement) {
+      playerPanel.classList.remove("is-fullscreen");
+    }
+  });
 
   player.querySelectorAll("[data-close]").forEach((el) =>
     el.addEventListener("click", closePlayer)
   );
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && !player.hidden) closePlayer();
+    if (e.key === "Escape" && !player.hidden && !document.fullscreenElement) closePlayer();
   });
 
   searchInput.addEventListener("input", () => {
