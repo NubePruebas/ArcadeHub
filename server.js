@@ -29,12 +29,40 @@ if (isProd && !SESSION_SECRET) {
   process.exit(1);
 }
 
-// Solo en local, si no hay .env, usa clave de desarrollo
-const EFFECTIVE_ADMIN_PASSWORD = ADMIN_PASSWORD || "arcadehub2026";
-const GAMES_FILE = path.join(__dirname, "data", "games.json");
-const UPLOADS_DIR = path.join(__dirname, "uploads", "covers");
+// Persistencia: en Railway monta un Volume en /data
+// (RAILWAY_VOLUME_MOUNT_PATH o DATA_DIR). Local usa ./data y ./uploads/covers
+const DATA_DIR = cleanSecret(
+  process.env.DATA_DIR || process.env.RAILWAY_VOLUME_MOUNT_PATH || ""
+);
+const GAMES_FILE = DATA_DIR
+  ? path.join(DATA_DIR, "games.json")
+  : path.join(__dirname, "data", "games.json");
+const UPLOADS_DIR = DATA_DIR
+  ? path.join(DATA_DIR, "covers")
+  : path.join(__dirname, "uploads", "covers");
+const SEED_GAMES_FILE = path.join(__dirname, "data", "games.json");
 
 fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+fs.mkdirSync(path.dirname(GAMES_FILE), { recursive: true });
+
+function seedGamesIfNeeded() {
+  if (fs.existsSync(GAMES_FILE)) return;
+  try {
+    if (fs.existsSync(SEED_GAMES_FILE)) {
+      fs.copyFileSync(SEED_GAMES_FILE, GAMES_FILE);
+      console.log("Catálogo inicial copiado al disco persistente.");
+    } else {
+      fs.writeFileSync(GAMES_FILE, "[]", "utf8");
+    }
+  } catch (err) {
+    console.warn("No se pudo sembrar games.json:", err.message);
+  }
+}
+
+seedGamesIfNeeded();
+
+// Solo en local, si no hay .env, usa clave de desarrollo
+const EFFECTIVE_ADMIN_PASSWORD = ADMIN_PASSWORD || "arcadehub2026";
 
 const app = express();
 app.set("trust proxy", 1);
@@ -225,6 +253,7 @@ app.delete("/api/games/:id", requireAdmin, (req, res) => {
   res.json({ ok: true });
 });
 
+app.use("/uploads/covers", express.static(UPLOADS_DIR));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.static(path.join(__dirname), { extensions: ["html"] }));
 
@@ -233,4 +262,7 @@ app.listen(PORT, "0.0.0.0", () => {
   console.log(
     `ADMIN_PASSWORD desde variables: ${ADMIN_PASSWORD ? "sí" : "no (usando default local)"}`
   );
+  console.log(`Persistencia en: ${DATA_DIR || "local (./data y ./uploads)"}`);
+  console.log(`Juegos: ${GAMES_FILE}`);
+  console.log(`Portadas: ${UPLOADS_DIR}`);
 });
